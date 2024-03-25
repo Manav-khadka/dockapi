@@ -6,7 +6,7 @@ import { account } from '../appwrite.js'
 import { OAuthProvider } from 'appwrite'
 
 const NavBar = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
 
@@ -46,7 +46,8 @@ console.log("user",user)
       <div className="">
         <Image src="/2.png" width={200} height={200} alt="logo" />
       </div>
-      {user ? ( 
+      {
+      Object.entries(user).length>0 ? ( 
         // Show user information and other functionalities if logged in
         <div
           className="flex items-center gap-3 h-10 w-32 border justify-center bg-white text-2xl text-black rounded-3xl hover:bg-black hover:text-white cursor-pointer"
