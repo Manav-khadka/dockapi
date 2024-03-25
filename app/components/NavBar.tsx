@@ -15,8 +15,8 @@ const NavBar = () => {
     try {
       const session =  account.createOAuth2Session(
         OAuthProvider.Github,
-        "http://localhost:3000",
-        "http://localhost:3000/fail"
+        "https://dockapi.vercel.app",
+        "https://dockapi.vercel.app/fail"
       );
       setUser({"session":session}); // Update user state after session creation
     } catch (error) {
