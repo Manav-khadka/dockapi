@@ -1,6 +1,24 @@
+'use client'
+import { useState } from "react";
 import  Container from "./components/Container";
 import NavBar from "./components/NavBar";
+import UploadForm from "./components/UploadForm";
 
+
+interface User {
+  uid?: string;
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  reloadUserInfo?:{
+
+  providerUserInfo?: {
+    0?: {
+      screenName: string;
+    };
+  };
+};
+}
 export default function Home() {
   const data =[
     {
@@ -67,12 +85,21 @@ export default function Home() {
     }
    ]
 
+   const [user, setUser] = useState<User>({});
+   const [isSignedIn, setIsSignedIn] = useState(false);
+   const [isUploadForm, setisUploadForm] = useState(false);
+
+   console.log(user)  
   return (
     <main className={`${"w-screen h-full p-10 bg-slate-900 "} `}>
+      
     
       <div className="flex justify-center flex-col items-center"> 
-      <NavBar/>
-
+      <NavBar user={user} setUser={setUser} setIsSignedIn={setIsSignedIn} isSignedIn={isSignedIn} setisUploadForm={setisUploadForm} />
+      {
+      isUploadForm ? <UploadForm isUploadForm={isUploadForm} setisUploadForm={setisUploadForm}/>:null}
+      {isSignedIn ? <div className="text-white">Welcome, {user?.reloadUserInfo?.providerUserInfo?.[0]?.screenName}</div>
+      :null}
       <div className="flex justify-center gap-10 p-10 flex-wrap w-5/6">
        {
           data.map((item,index)=>{
@@ -82,6 +109,7 @@ export default function Home() {
         
         </div>
     </div>
+  
     </main>
   );
 }

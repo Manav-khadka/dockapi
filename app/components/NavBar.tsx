@@ -1,68 +1,80 @@
 'use client'
 import Image from "next/image";
-import { FaGithub } from "react-icons/fa";
-import { useState, useEffect } from "react";
-import { account } from '../appwrite.js'
-import { OAuthProvider } from 'appwrite'
-
-const NavBar = () => {
-  const [user, setUser] = useState({});
-  const [isLoading, setIsLoading] = useState(false); // State for loading indicator
+import { FaGithub, FaUpload, FaSignOutAlt } from "react-icons/fa";
+import { useState, useEffect, SetStateAction } from "react";
+import { signInWithGithub, signOut, onAuthStateChanged } from "../auth.js";
+import UploadForm from "./UploadForm";
 
 
-  const login = async () => {
-    setIsLoading(true); // Set loading state before redirection
-    try {
-      const session =  account.createOAuth2Session(
-        OAuthProvider.Github,
-        "dockapi.vercel.app",
-        "dockapi.vercel.app/fail"
-      );
-      setUser({"session":session}); // Update user state after session creation
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false); // Clear loading state after operation completes
-    }
-  };
+interface User {
+    uid?: string;
+    displayName?: string;
+    email?: string;
+    photoURL?: string;
+}
+interface NavBarProps {
+    user: User;
+    setUser: React.Dispatch<React.SetStateAction<User>>;
+    setIsSignedIn: React.Dispatch<React.SetStateAction<boolean>>;
+    isSignedIn?: boolean;
+    setisUploadForm: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
+const NavBar = ({user,setUser,setIsSignedIn,isSignedIn,setisUploadForm} : NavBarProps) => {
 
-  const getUser = async () => {
-    try {
-      const user = await account.get();
-      setUser(user);
-    } catch (error) {
-      // Handle error here (e.g., display message for guest users)
-      console.error("Error fetching user:", error);
-    }
-  };
-
+ 
   useEffect(() => {
-    getUser();
-  }, []); // Empty dependency array to run only once on mount
-console.log("user",user)
+    const unsubscribe = onAuthStateChanged((user: SetStateAction<User>) => {
+      if (user) {
+        // User is signed in.
+        setUser(user);
+        setIsSignedIn(true);
+        
+      } else {
+        // User is signed out.
+        setUser({});
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <div className="w-2/4 h-20 bg-white rounded-3xl flex items-center justify-between ">
+    <div className="lg:w-2/4   h-20 bg-white rounded-3xl flex items-center justify-between ">
       <div className="">
         <Image src="/2.png" width={200} height={200} alt="logo" />
       </div>
-      {
-      Object.entries(user).length>0 ? ( 
-        // Show user information and other functionalities if logged in
-        <div
-          className="flex items-center gap-3 h-10 w-32 border justify-center bg-white text-2xl text-black rounded-3xl hover:bg-black hover:text-white cursor-pointer"
+      
+       {isSignedIn
+       ? 
+      <div className="flex gap-3">
+
+         <div
+        className="flex items-center gap-3 h-10 w-28 
+        border justify-center bg-white text-sm text-black 
+        rounded-3xl hover:bg-black hover:text-white cursor-pointer"
+        onClick={() => setisUploadForm(true)}
         >
-          Welcome, 
-        </div>
-      ) : (
-        // Show login button or guest UI if not logged in
-        <div
-          className="flex items-center gap-3 h-10 w-32 border justify-center bg-white text-2xl text-black rounded-3xl hover:bg-black hover:text-white cursor-pointer"
-          onClick={login}
+           <div className="text-sm  "> { 'Upload'}</div> <FaUpload />
+            </div>
+         <div
+        className="flex items-center gap-3 h-10 w-28
+        border justify-center bg-white text-sm text-black rounded-3xl
+         hover:bg-black hover:text-white cursor-pointer"
+         onClick={signOut}
+         >
+           < div className="text-sm "> { 'logout'}</div><FaSignOutAlt />
+            </div>
+       </div>
+       : <div
+          className="flex items-center gap-3 h-10 w-28 border justify-center bg-white text-xl text-black rounded-3xl hover:bg-black hover:text-white cursor-pointer"
+          onClick={signInWithGithub}
         >
-         {isLoading ? 'Loading...' : 'Login'} <FaGithub />
-        </div>
-      )}
+          <div className="text-sm  "> { 'login'}</div> <FaGithub />
+        </div>}
+      
+
+      
     </div>
   );
 };

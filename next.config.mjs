@@ -2,7 +2,8 @@
 const nextConfig = {
     images: {
         remotePatterns: [
-            { hostname: 'i.imgur.com' }
+            { hostname: 'i.imgur.com' },
+            { hostname: 'api.imgur.com' }
         ]
     },
 
