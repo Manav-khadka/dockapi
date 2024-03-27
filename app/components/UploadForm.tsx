@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import axios from "axios"; // Consider using axios for a cleaner approach
-
-import { upload } from "../upload.js";
-import { set } from "firebase/database";
-
+import axios from "axios";
 interface UploadFormProps {
   isUploadForm: boolean;
   setisUploadForm: React.Dispatch<React.SetStateAction<boolean>>;
