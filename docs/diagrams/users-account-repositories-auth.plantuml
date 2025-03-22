@@ -1,0 +1,56 @@
+@startuml
+entity "users" as users {
+    *id : UUID <<PK>>
+    --
+    username : VARCHAR
+    email : VARCHAR
+    profile_image : VARCHAR
+    role : VARCHAR
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "linked_accounts" as linked_accounts {
+    *id : UUID <<PK>>
+    --
+    user_id : UUID <<FK>>
+    provider : VARCHAR
+    provider_user_id : VARCHAR
+    access_token : TEXT
+    refresh_token : TEXT
+    token_type : VARCHAR
+    scope : VARCHAR
+    expires_at : TIMESTAMP
+    linked_at : TIMESTAMP
+}
+
+entity "refresh_tokens" as refresh_tokens {
+    *id : UUID <<PK>>
+    --
+    user_id : UUID <<FK>>
+    token : TEXT
+    expires_at : TIMESTAMP
+    created_at : TIMESTAMP
+}
+
+entity "repositories" as repositories {
+    *id : UUID <<PK>>
+    --
+    linked_account_id : UUID <<FK>>
+    name : VARCHAR
+    full_name : VARCHAR
+    repo_provider_id : VARCHAR
+    description : TEXT
+    visibility : VARCHAR
+    default_branch : VARCHAR
+    clone_url : VARCHAR
+    html_url : VARCHAR
+    last_activity_at : TIMESTAMP
+    fetched_at : TIMESTAMP
+}
+
+users ||--o{ linked_accounts : has
+users ||--o{ refresh_tokens : issues
+linked_accounts ||--o{ repositories : owns
+
+@enduml
