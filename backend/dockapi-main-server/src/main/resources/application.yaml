@@ -2,6 +2,16 @@ server:
   port: 8080
 
 spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://ec2-54-87-118-187.compute-1.amazonaws.com:5432/dockapi  # Add :5432 and /dockapi
+    username: dockapi_admin
+    password: DockAPI7999
+    driver-class-name: org.postgresql.Driver
   security:
     oauth2:
       client:
