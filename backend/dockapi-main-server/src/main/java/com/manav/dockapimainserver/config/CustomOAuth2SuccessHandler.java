@@ -1,11 +1,13 @@
 package com.manav.dockapimainserver.config;
+
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +41,17 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         String jwtToken = jwtService.generateToken(username, email, registrationId);
 
-        // Redirect to frontend with token
-        String redirectUrl = "http://localhost:3000/home?token=" + jwtToken + "&provider=" + registrationId;
+        // Create HttpOnly cookie for the JWT token
+        Cookie tokenCookie = new Cookie("token", jwtToken);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true); // Set to true if using HTTPS in production
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(24 * 60 * 60); // 1 day, adjust as needed
+
+        response.addCookie(tokenCookie);
+
+        // Optionally pass only the provider to frontend via query param or handle routing in frontend
+        String redirectUrl = "http://localhost:3000/home?provider=" + registrationId;
         response.sendRedirect(redirectUrl);
     }
 }
