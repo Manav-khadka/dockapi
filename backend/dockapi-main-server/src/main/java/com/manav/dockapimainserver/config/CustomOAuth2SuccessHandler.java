@@ -25,6 +25,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                                         Authentication authentication) throws IOException, ServletException {
 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+        // Log the token
+        System.out.println("OAuth2AuthenticationToken: " + oauthToken);
         OAuth2User oAuth2User = oauthToken.getPrincipal();
 
         String registrationId = oauthToken.getAuthorizedClientRegistrationId(); // github or gitlab
@@ -51,7 +53,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.addCookie(tokenCookie);
 
         // Optionally pass only the provider to frontend via query param or handle routing in frontend
-        String redirectUrl = "http://localhost:3000/home?provider=" + registrationId;
+        String redirectUrl = "http://localhost:3000";
         response.sendRedirect(redirectUrl);
     }
 }
