@@ -39,6 +39,7 @@ backend/mvnw
 backend/mvnw.cmd
 backend/*.iml
 backend/*.log
+backend/*.pem
 *.class
 *.jar
 *.war
