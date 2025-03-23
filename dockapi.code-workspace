@@ -1,0 +1,58 @@
+{
+  "folders": [
+    {
+      "path": "frontend"
+    },
+    {
+      "path": "backend/dockapi-main-server"
+    }
+  ],
+  "settings": {},
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Next.js App",
+        "type": "shell",
+        "command": "npm run dev",
+        "options": {
+          "cwd": "${workspaceFolder:frontend}"
+        },
+        "isBackground": false,
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "clear": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Run Spring Boot App",
+        "type": "shell",
+        "command": "./mvnw spring-boot:run -Dspring.output.ansi.enabled=ALWAYS -Dstyle.color=always",
+        "options": {
+          "cwd": "${workspaceFolder:backend}/dockapi-main-server",
+          "env": {
+            "TERM": "xterm-256color"
+          }
+        },
+        "isBackground": false,
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "clear": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Run DockAPI",
+        "dependsOn": [
+          "Run Next.js App",
+          "Run Spring Boot App"
+        ],
+        "dependsOrder": "parallel",
+        "problemMatcher": []
+      }
+    ]
+  }
+}

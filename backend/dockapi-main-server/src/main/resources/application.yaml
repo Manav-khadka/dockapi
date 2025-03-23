@@ -8,17 +8,17 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}  # Use environment variables
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://ec2-54-87-118-187.compute-1.amazonaws.com:5432/dockapi  # Add :5432 and /dockapi
+    username: dockapi_admin
+    password: DockAPI7999
     driver-class-name: org.postgresql.Driver
   security:
     oauth2:
       client:
         registration:
           github:
-            client-id: ${GIT_HUB_CLIENT_ID}
-            client-secret: ${GIT_HUB_CLIENT_SECRET}
+            client-id: Ov23liIlxN0xZ9vg9htz
+            client-secret: 41f0a0bf63e612dbc9e922db7adf2335f17356e7
             scope:
               - repo
               - read:user
@@ -28,6 +28,15 @@ spring:
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             provider: github
+        #   gitlab:
+        #     client-id: YOUR_GITLAB_CLIENT_ID
+        #     client-secret: YOUR_GITLAB_CLIENT_SECRET
+        #     scope:
+        #       - read_user
+        #     redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        #     client-authentication-method: client_secret_post
+        #     authorization-grant-type: authorization_code
+        #     provider: gitlab
 
         provider:
           github:
@@ -35,3 +44,20 @@ spring:
             token-uri: https://github.com/login/oauth/access_token
             user-info-uri: https://api.github.com/user
             user-name-attribute: login
+        #   gitlab:
+        #     authorization-uri: https://gitlab.com/oauth/authorize
+        #     token-uri: https://gitlab.com/oauth/token
+        #     user-info-uri: https://gitlab.com/api/v4/user
+        #     user-name-attribute: username
+
+springdoc:
+  api-docs:
+    path: /api-docs # URL to access the OpenAPI JSON
+  swagger-ui:
+    path: /swagger-ui.html # Swagger UI URL
+    operationsSorter: method # Sort endpoints by HTTP method
+    tagsSorter: alpha # Sort tags alphabetically
+    display-request-duration: true # Show how long each request takes
+    doc-expansion: none # Collapse all sections by default
+    disable-swagger-default-url: true
+    persist-authorization: true # Keeps authorization token when refreshing
