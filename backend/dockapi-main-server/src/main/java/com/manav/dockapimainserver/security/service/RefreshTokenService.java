@@ -2,6 +2,8 @@ package com.manav.dockapimainserver.security.service;
 
 import org.springframework.stereotype.Service;
 
+import com.manav.dockapimainserver.security.models.RefreshToken;
+
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,43 +17,20 @@ public class RefreshTokenService {
 
     public String createRefreshToken(String username) {
         String token = UUID.randomUUID().toString();
-        RefreshToken refreshToken = new RefreshToken(token, username, Instant.now().plusSeconds(60 * 60 * 24 * 7)); // 7 days
+        RefreshToken refreshToken = new RefreshToken(); // 7 days
         refreshTokenStore.put(token, refreshToken);
         return token;
     }
 
     public boolean isValid(String token) {
         RefreshToken refreshToken = refreshTokenStore.get(token);
-        return refreshToken != null && refreshToken.getExpiryDate().isAfter(Instant.now());
+        return refreshToken != null && refreshToken.getExpiresAt().isAfter(Instant.now());
     }
 
     public String getUsernameFromToken(String token) {
         RefreshToken refreshToken = refreshTokenStore.get(token);
-        return refreshToken != null ? refreshToken.getUsername() : null;
+        return refreshToken != null ? refreshToken.getUser().getUsername() : null;
     }
 
-    // Model class for refresh token
-    private static class RefreshToken {
-        private final String token;
-        private final String username;
-        private final Instant expiryDate;
-
-        public RefreshToken(String token, String username, Instant expiryDate) {
-            this.token = token;
-            this.username = username;
-            this.expiryDate = expiryDate;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public Instant getExpiryDate() {
-            return expiryDate;
-        }
-    }
+   
 }
