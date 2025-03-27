@@ -26,8 +26,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable for now; enable CSRF in prod.
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login/**", "/error").permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
+            .requestMatchers("/api/users/login/**").permitAll()
+            .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
             .authorizationEndpoint(authorization -> authorization

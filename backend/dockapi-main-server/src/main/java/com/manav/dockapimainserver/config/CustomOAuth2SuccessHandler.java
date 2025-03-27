@@ -106,7 +106,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(true); // true in production (HTTPS)
         jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(60 * 15); // 15 mins access token
+        jwtCookie.setMaxAge(3600 * 3600); 
 
         // Create HttpOnly cookie for the Refresh Token
         Cookie refreshCookie = new Cookie("refresh_token", refreshToken);

@@ -71,6 +71,7 @@ spring:
 springdoc:
   api-docs:
     path: /api-docs # URL to access the OpenAPI JSON
+    enabled: true
   swagger-ui:
     path: /swagger-ui.html # Swagger UI URL
     operationsSorter: method # Sort endpoints by HTTP method
@@ -79,3 +80,11 @@ springdoc:
     doc-expansion: none # Collapse all sections by default
     disable-swagger-default-url: true
     persist-authorization: true # Keeps authorization token when refreshing
+    enabled: true
+    try-it-out-enabled: true
+    filter: true
+    deep-linking: true
+    display-operation-id: true
+    syntax-highlight:
+      activated: true
+      theme: monokai
