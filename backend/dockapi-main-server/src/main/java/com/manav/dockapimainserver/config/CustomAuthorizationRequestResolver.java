@@ -34,7 +34,6 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
         }
 
         Map<String, Object> additionalParams = new HashMap<>(req.getAdditionalParameters());
-        additionalParams.put("allow_signup", "false"); // Optional, but might trigger consent screen
 
         return OAuth2AuthorizationRequest.from(req)
                 .additionalParameters(additionalParams)

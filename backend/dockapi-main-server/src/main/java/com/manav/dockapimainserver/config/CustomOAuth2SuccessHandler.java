@@ -22,6 +22,14 @@ import com.manav.dockapimainserver.repositories.UserRepository;
 import com.manav.dockapimainserver.security.service.RefreshTokenService;
 
 import java.io.IOException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -56,9 +64,17 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         } else if ("gitlab".equals(registrationId)) {
             username = oAuth2User.getAttribute("username");
             profileImage = oAuth2User.getAttribute("avatar_url");
-        } else {
+        } else if ("bitbucket".equals(registrationId)) {
+            username = oAuth2User.getAttribute("nickname");
+            profileImage = oAuth2User.getAttribute("avatar_url");
+        
+            // Fetch email from Bitbucket API
+            email = fetchBitbucketEmail(accessToken);
+        }
+         else {
             throw new IllegalStateException("Unknown registrationId: " + registrationId);
         }
+        
 
         // Check if user exists in the database
         User user = userRepository.findByEmail(email).orElse(null);
@@ -107,4 +123,30 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String redirectUrl = "http://localhost:3000";
         response.sendRedirect(redirectUrl);
     }
+    private String fetchBitbucketEmail(String accessToken) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+    
+            ResponseEntity<Map> response = restTemplate.exchange(
+                "https://api.bitbucket.org/2.0/user/emails",
+                HttpMethod.GET,
+                entity,
+                Map.class
+            );
+    
+            List<Map<String, Object>> values = (List<Map<String, Object>>) response.getBody().get("values");
+            for (Map<String, Object> emailEntry : values) {
+                if (emailEntry.get("is_primary").equals(true) && emailEntry.get("is_confirmed").equals(true)) {
+                    return (String) emailEntry.get("email");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to fetch Bitbucket email: " + e.getMessage());
+        }
+        return null;
+    }
+    
 }
