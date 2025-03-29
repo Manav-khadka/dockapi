@@ -1,4 +1,5 @@
 package com.manav.dockapimainserver.config;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,34 +14,20 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.manav.dockapimainserver.models.LinkedAccount;
 import com.manav.dockapimainserver.models.User;
-import com.manav.dockapimainserver.repositories.LinkedAccountRepository;
-import com.manav.dockapimainserver.repositories.RefreshTokenRepository;
-import com.manav.dockapimainserver.repositories.RepositoryRepository;
-import com.manav.dockapimainserver.repositories.UserRepository;
 import com.manav.dockapimainserver.security.service.RefreshTokenService;
+import com.manav.dockapimainserver.services.OAuthService;
 
 import java.io.IOException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService; // New service for managing refresh tokens
+    private final RefreshTokenService refreshTokenService;
     private final OAuth2AuthorizedClientService authorizedClientService;
-    private final UserRepository userRepository;
-    private final LinkedAccountRepository linkedAccountRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final OAuthService oAuthService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -50,103 +37,32 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = oauthToken.getPrincipal();
 
-        String registrationId = oauthToken.getAuthorizedClientRegistrationId(); // github or gitlab
-        String email = oAuth2User.getAttribute("email");
-        String profileImage;
-        // ✅ Get OAuth2 access token
+        String registrationId = oauthToken.getAuthorizedClientRegistrationId(); // github, gitlab, bitbucket
+
         OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
             registrationId, oauthToken.getName());
         String accessToken = authorizedClient.getAccessToken().getTokenValue();
-        String username;
-        if ("github".equals(registrationId)) {
-            username = oAuth2User.getAttribute("login");
-            profileImage = oAuth2User.getAttribute("avatar_url"); 
-        } else if ("gitlab".equals(registrationId)) {
-            username = oAuth2User.getAttribute("username");
-            profileImage = oAuth2User.getAttribute("avatar_url");
-        } else if ("bitbucket".equals(registrationId)) {
-            username = oAuth2User.getAttribute("nickname");
-            profileImage = oAuth2User.getAttribute("avatar_url");
-        
-            // Fetch email from Bitbucket API
-            email = fetchBitbucketEmail(accessToken);
-        }
-         else {
-            throw new IllegalStateException("Unknown registrationId: " + registrationId);
-        }
-        
 
-        // Check if user exists in the database
-        User user = userRepository.findByEmail(email).orElse(null);
-        if(user == null){
-            user = new User();
-            user.setUsername(username);
-            user.setEmail(email);
-            user.setProfileImage(profileImage);
-            user.setRole("USER");
-            userRepository.save(user);
-        }
+        User user = oAuthService.processOAuthUser(oAuth2User, registrationId, accessToken);
 
-        // check if linked account exists or update if necessary
-        LinkedAccount linkedAccount = linkedAccountRepository.findByUserAndProvider(user, registrationId).orElse(new LinkedAccount());
-        linkedAccount.setUser(user);
-        linkedAccount.setProvider(registrationId);
-        linkedAccount.setProviderUserId(oAuth2User.getName());
-        linkedAccount.setAccessToken(accessToken);
-        linkedAccountRepository.save(linkedAccount);
+        // Generate JWT & Refresh Token
+        String jwtToken = jwtService.generateToken(user.getUsername(), user.getEmail(), registrationId);
+        String refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
 
-        // Generate JWT Access Token (Short-lived)
-        String jwtToken = jwtService.generateToken(username, email, registrationId);
-
-        // Generate Refresh Token (Long-lived)
-        String refreshToken = refreshTokenService.createRefreshToken(username);
-
-        // Create HttpOnly cookie for the JWT token (Access Token)
-        Cookie jwtCookie = new Cookie("access_token", jwtToken);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true); // true in production (HTTPS)
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(3600 * 3600); 
-
-        // Create HttpOnly cookie for the Refresh Token
-        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true); // true in production (HTTPS)
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(60 * 60 * 24 * 7); // 7 days refresh token
-
-        // Add cookies to response
-        response.addCookie(jwtCookie);
-        response.addCookie(refreshCookie);
+        // Set Cookies
+        setCookie(response, "access_token", jwtToken, 3600);
+        setCookie(response, "refresh_token", refreshToken, 604800); // 7 days
 
         // Redirect to frontend
-        String redirectUrl = "http://localhost:3000";
-        response.sendRedirect(redirectUrl);
+        response.sendRedirect("http://localhost:3000");
     }
-    private String fetchBitbucketEmail(String accessToken) {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-    
-            ResponseEntity<Map> response = restTemplate.exchange(
-                "https://api.bitbucket.org/2.0/user/emails",
-                HttpMethod.GET,
-                entity,
-                Map.class
-            );
-    
-            List<Map<String, Object>> values = (List<Map<String, Object>>) response.getBody().get("values");
-            for (Map<String, Object> emailEntry : values) {
-                if (emailEntry.get("is_primary").equals(true) && emailEntry.get("is_confirmed").equals(true)) {
-                    return (String) emailEntry.get("email");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to fetch Bitbucket email: " + e.getMessage());
-        }
-        return null;
+
+    private void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+        response.addCookie(cookie);
     }
-    
 }
