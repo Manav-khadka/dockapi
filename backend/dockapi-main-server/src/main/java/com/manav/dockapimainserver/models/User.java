@@ -22,8 +22,21 @@ public class User {
     private String email;
     private String profileImage;
     private String role;
+    
+    @Column(updatable = false)
     private Instant createdAt;
     private Instant updatedAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
+    }
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LinkedAccount> linkedAccounts;
