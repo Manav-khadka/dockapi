@@ -101,7 +101,7 @@ public class OAuthService {
     private String getProviderApiUrl(String provider) {
         return switch (provider) {
             case "github" -> "https://api.github.com/user/repos";
-            case "gitlab" -> "https://gitlab.com/api/v4/projects?membership=true";
+            case "gitlab" -> "https://gitlab.com/api/v4/projects?membership=false";
             case "bitbucket" -> "https://api.bitbucket.org/2.0/repositories?role=member";
             default -> throw new IllegalArgumentException("Unsupported provider: " + provider);
         };
