@@ -23,14 +23,14 @@ jobs:
           java-version: '17'
 
       - name: Build Backend with Maven
-        working-directory: backend
+        working-directory: backend/dockapi-main-server  # Updated path
         run: mvn clean package -DskipTests
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: backend-jar
-          path: backend/target/*.jar
+          path: backend/dockapi-main-server/target/*.jar  # Updated path
 
       - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v1.0.3
