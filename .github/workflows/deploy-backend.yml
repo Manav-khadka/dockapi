@@ -26,11 +26,9 @@ jobs:
         working-directory: backend/dockapi-main-server  # Updated path
         run: mvn clean package -DskipTests
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-jar
-          path: backend/dockapi-main-server/target/*.jar  # Updated path
+      - name: Upload Artifact to S3
+        run: |
+          aws s3 cp backend/dockapi-main-server/target/*.jar s3://your-bucket-name/dockapi-app.jar
 
       - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v1.0.3
@@ -39,8 +37,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/${{ secrets.EC2_USER }}/dockapi/backend
+            cd /home/${{ secrets.EC2_USER }}/dockapi/backend/dockapi-main-server  # Corrected path
             sudo systemctl stop dockapi-backend
             rm -f app.jar
-            curl -o app.jar -L ${{ secrets.ARTIFACT_URL }}
+            aws s3 cp s3://your-bucket-name/dockapi-app.jar app.jar  # Download the JAR from S3
             sudo systemctl start dockapi-backend
