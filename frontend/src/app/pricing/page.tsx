@@ -4,7 +4,6 @@ import { Layout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -237,7 +236,7 @@ export default function PricingPage() {
             <div>
               <h3 className="text-lg font-medium mb-2">What happens if I exceed my plan limits?</h3>
               <p className="text-muted-foreground">
-                We'll notify you when you're approaching your plan limits. If you exceed them, your applications will continue to run, but we'll reach out to discuss upgrading to a more suitable plan. We never shut down your services without warning.
+                We&apos;ll notify you when you&apos;re approaching your plan limits. If you exceed them, your applications will continue to run, but we&apos;ll reach out to discuss upgrading to a more suitable plan. We never shut down your services without warning.
               </p>
             </div>
             
@@ -251,7 +250,7 @@ export default function PricingPage() {
             <div>
               <h3 className="text-lg font-medium mb-2">Is there a long-term commitment?</h3>
               <p className="text-muted-foreground">
-                No, you can cancel your subscription at any time. For monthly plans, you'll have access until the end of your current billing month. For annual plans, we offer prorated refunds for the unused portion.
+                No, you can cancel your subscription at any time. For monthly plans, you&apos;ll have access until the end of your current billing month. For annual plans, we offer prorated refunds for the unused portion.
               </p>
             </div>
           </div>
