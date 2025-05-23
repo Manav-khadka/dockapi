@@ -1,5 +1,4 @@
 // Simplified version for the project
-import { useState, useEffect } from 'react';
 
 type ToastProps = {
   title?: string;
