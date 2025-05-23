@@ -369,10 +369,10 @@ export default function ApiReferencePage() {
               <li><code>201 Created</code> - Resource was successfully created.</li>
               <li><code>400 Bad Request</code> - The request was unacceptable, often due to missing a required parameter.</li>
               <li><code>401 Unauthorized</code> - No valid API key provided.</li>
-              <li><code>403 Forbidden</code> - The API key doesn't have permissions to perform the request.</li>
-              <li><code>404 Not Found</code> - The requested resource doesn't exist.</li>
+              <li><code>403 Forbidden</code> - The API key doesn&apos;t have permissions to perform the request.</li>
+              <li><code>404 Not Found</code> - The requested resource doesn&apos;t exist.</li>
               <li><code>429 Too Many Requests</code> - Too many requests hit the API too quickly.</li>
-              <li><code>500, 502, 503, 504 Server Errors</code> - Something went wrong on DockAPI's end.</li>
+              <li><code>500, 502, 503, 504 Server Errors</code> - Something went wrong on DockAPI&apos;s end.</li>
             </ul>
           </div>
         </div>
