@@ -72,7 +72,7 @@ export default function FAQPage() {
         },
         {
           question: 'Does DockAPI support custom domains?',
-          answer: 'Yes, you can configure custom domains for your applications. We provide automatic HTTPS certificates through Let\'s Encrypt. You simply need to add your domain in the dashboard and update your DNS settings to point to our servers.'
+          answer: 'Yes, you can configure custom domains for your applications. We provide automatic HTTPS certificates through Let&apos;s Encrypt. You simply need to add your domain in the dashboard and update your DNS settings to point to our servers.'
         },
         {
           question: 'How does DockAPI handle logging?',
