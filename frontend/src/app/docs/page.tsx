@@ -140,7 +140,7 @@ export default function DocumentationPage() {
         <div className="bg-blue-50 rounded-xl p-8 text-center">
           <h2 className="text-2xl font-semibold mb-2">Need more help?</h2>
           <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            Can't find what you're looking for or have a specific question? Our support team is ready to help you.
+            Can&apos;t find what you&apos;re looking for or have a specific question? Our support team is ready to help you.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild variant="default">
