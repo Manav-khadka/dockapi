@@ -9,19 +9,21 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 
 const navigation = [
+  { name: "Home", href: "/" },
+  { name: "Docs", href: "/docs" },
+  { name: "Dashboard", href: "/dashboard" },
+  { name: "Pricing", href: "/pricing" },
   {
     name: "Features",
     href: "#features",
     submenu: [
+      { name: "Docker Deployments", href: "#docker-deployments" },
+      { name: "API Gateway", href: "#api-gateway" },
+      { name: "AI Optimization", href: "#ai-optimization" },
       { name: "Analytics", href: "#analytics" },
-      { name: "AI Suggestions", href: "#aisuggestions" },
-      { name: "Collaboration", href: "#collaboration" },
     ],
   },
-  { name: "Free Apis", href: "#freeapis" },
-  { name: "Documentations", href: "#documentations" },
   { name: "Enterprise", href: "#enterprise" },
-  { name: "Pricing", href: "#pricing" },
 ];
 
 export default function Navbar() {
@@ -38,7 +40,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -51,54 +53,75 @@ export default function Navbar() {
   };
 
   const navbarVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0 },
+    initial: { opacity: 0, y: -20 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   const dropdownVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
+    hidden: { opacity: 0, y: 10, height: 0 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      height: "auto",
+      transition: { 
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    },
   };
 
   const mobileMenuVariants = {
     hidden: { opacity: 0, x: "100%" },
-    visible: { opacity: 1, x: 0 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut"
+      }
+    },
   };
 
   if (!mounted) return null;
 
   return (
     <motion.nav
-      initial="hidden"
-      animate="visible"
+      initial="initial"
+      animate="animate"
       variants={navbarVariants}
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b"
+          ? "bg-background/90 backdrop-blur-md shadow-sm border-b"
           : "bg-background/0"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            {/* svg from public */}
-            <Image src="/dockapilogo.svg" alt="DockAPI Logo" width={40} height={40} />
-            <span className="font-bold text-xl">DockAPI</span>
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative w-10 h-10 overflow-hidden transition-all duration-300 group-hover:scale-110">
+              <Image 
+                src="/dockapilogo.svg" 
+                alt="DockAPI Logo" 
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="font-bold text-xl tracking-tight">DockAPI</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navigation.map((item) => (
               <div
                 key={item.name}
-                className="relative group"
+                className="relative group px-1"
                 onMouseEnter={() => item.submenu && setActiveDropdown(item.name)}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <Link
                   href={item.href}
-                  className="text-sm font-medium text-foreground/80 hover:text-foreground flex items-center"
+                  className="py-2 px-3 text-sm rounded-md font-medium text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-all flex items-center"
                 >
                   {item.name}
                   {item.submenu && (
@@ -106,33 +129,30 @@ export default function Navbar() {
                   )}
                 </Link>
 
-                {/* Invisible hover bridge */}
-                {item.submenu && (
-                  <div className="absolute -bottom-2 left-0 w-full h-2" />
-                )}
-
                 {/* Dropdown Menu */}
-                {item.submenu && activeDropdown === item.name && (
+                {item.submenu && (
                   <AnimatePresence>
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      variants={dropdownVariants}
-                      className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-popover border"
-                    >
-                      <div className="py-1">
-                        {item.submenu.map((subItem) => (
-                          <Link
-                            key={subItem.name}
-                            href={subItem.href}
-                            className="block px-4 py-2 text-sm text-foreground/80 hover:text-foreground hover:bg-accent"
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
+                    {activeDropdown === item.name && (
+                      <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                        variants={dropdownVariants}
+                        className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-background border overflow-hidden"
+                      >
+                        <div className="py-1">
+                          {item.submenu.map((subItem) => (
+                            <Link
+                              key={subItem.name}
+                              href={subItem.href}
+                              className="block px-4 py-2.5 text-sm text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-colors"
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
                   </AnimatePresence>
                 )}
               </div>
@@ -140,11 +160,12 @@ export default function Navbar() {
           </div>
 
           {/* Right side buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="rounded-md hover:bg-foreground/5"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -153,12 +174,20 @@ export default function Navbar() {
               )}
             </Button>
             <Link href="https://github.com/Manav-khadka/dockapi-backend" target="_blank">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="rounded-md hover:bg-foreground/5">
                 <Github className="h-5 w-5" />
               </Button>
             </Link>
-            <Button variant="ghost">Contact</Button>
-            <Button>Start Free</Button>
+            <Link href="#contact">
+              <Button variant="outline" className="rounded-md border-foreground/10 hover:border-foreground/20">
+                Contact
+              </Button>
+            </Link>
+            <Link href="/deploy">
+              <Button className="rounded-md bg-foreground text-background hover:bg-foreground/90">
+                Start Free
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -167,6 +196,7 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="rounded-md"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -178,6 +208,7 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="rounded-md"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -197,47 +228,76 @@ export default function Navbar() {
             animate="visible"
             exit="hidden"
             variants={mobileMenuVariants}
-            className="md:hidden bg-background border-t"
+            className="fixed inset-0 z-40 md:hidden bg-background pt-16"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className="p-4 space-y-2 overflow-y-auto max-h-screen pb-20">
               {navigation.map((item) => (
                 <div key={item.name}>
-                  <button
-                    onClick={() => item.submenu && toggleMobileDropdown(item.name)}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-foreground/80 hover:text-foreground hover:bg-accent"
-                  >
-                    <span>{item.name}</span>
-                    {item.submenu && (
-                      mobileDropdowns.includes(item.name) ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )
-                    )}
-                  </button>
-                  {item.submenu && mobileDropdowns.includes(item.name) && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="pl-4 overflow-hidden"
+                  {item.submenu ? (
+                    <div className="border-b border-foreground/10 pb-2">
+                      <button
+                        className="w-full py-3 px-4 flex items-center justify-between text-base font-medium rounded-md hover:bg-foreground/5"
+                        onClick={() => toggleMobileDropdown(item.name)}
+                      >
+                        {item.name}
+                        {mobileDropdowns.includes(item.name) ? (
+                          <ChevronUp className="h-5 w-5" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5" />
+                        )}
+                      </button>
+                      <AnimatePresence>
+                        {mobileDropdowns.includes(item.name) && (
+                          <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                            variants={dropdownVariants}
+                            className="ml-4 mt-1 space-y-1"
+                          >
+                            {item.submenu.map((subItem) => (
+                              <Link
+                                key={subItem.name}
+                                href={subItem.href}
+                                className="block py-2.5 px-4 text-sm rounded-md hover:bg-foreground/5"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="block py-3 px-4 text-base font-medium border-b border-foreground/10 hover:bg-foreground/5 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {item.submenu.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          href={subItem.href}
-                          className="block px-3 py-2 rounded-md text-sm font-medium text-foreground/60 hover:text-foreground hover:bg-accent"
-                        >
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </motion.div>
+                      {item.name}
+                    </Link>
                   )}
                 </div>
               ))}
-              <div className="pt-4 flex flex-col space-y-2 px-3">
-                <Button variant="outline">Contact</Button>
-                <Button>Start Free</Button>
+              
+              <div className="pt-6 space-y-4">
+                <Link href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full rounded-md">
+                    Contact Us
+                  </Button>
+                </Link>
+                <Link href="https://github.com/Manav-khadka/dockapi-backend" target="_blank" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full rounded-md flex items-center justify-center">
+                    <Github className="h-5 w-5 mr-2" />
+                    GitHub
+                  </Button>
+                </Link>
+                <Link href="/deploy" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full rounded-md bg-foreground text-background">
+                    Start Free
+                  </Button>
+                </Link>
               </div>
             </div>
           </motion.div>
