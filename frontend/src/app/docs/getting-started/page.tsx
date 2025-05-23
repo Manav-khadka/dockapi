@@ -1,8 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Layout } from '@/components/layout';
-import { Button } from '@/components/ui/button';
 import { ChevronLeft, Copy, CheckCircle, AlertCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -64,19 +62,19 @@ export default function GettingStartedPage() {
               </p>
               <ul>
                 <li>
-                  <strong>Docker</strong>: Version 20.10.0 or higher. You can download it from <a href="https://www.docker.com/get-started" target="_blank" rel="noopener noreferrer">Docker's official website</a>.
+                  <strong>Docker</strong>: Version 20.10.0 or higher. You can download it from <a href="https://www.docker.com/get-started" target="_blank" rel="noopener noreferrer">Docker&apos;s official website</a>.
                 </li>
                 <li>
                   <strong>Node.js</strong>: Version 14.0.0 or higher (optional, needed only for using the DockAPI CLI). You can download it from <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer">Node.js website</a>.
                 </li>
                 <li>
-                  <strong>Git</strong>: Required for version control. You can download it from <a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer">Git's website</a>.
+                  <strong>Git</strong>: Required for version control. You can download it from <a href="https://git-scm.com/" target="_blank" rel="noopener noreferrer">Git&apos;s website</a>.
                 </li>
               </ul>
 
               <h2 id="installation">Installation</h2>
               <p>
-                You can interact with DockAPI through our web interface or by using our CLI tool. Here's how to install the CLI:
+                You can interact with DockAPI through our web interface or by using our CLI tool. Here&apos;s how to install the CLI:
               </p>
 
               <div className="border rounded-md my-6">
@@ -135,12 +133,12 @@ export default function GettingStartedPage() {
 
               <h2 id="first-project">Your First Project</h2>
               <p>
-                Let's create your first project and prepare it for deployment.
+                Let&apos;s create your first project and prepare it for deployment.
               </p>
 
               <h3>1. Log in to your DockAPI account</h3>
               <p>
-                If you haven't already, <Link href="/login" className="text-blue-600 hover:text-blue-800">sign up for a DockAPI account</Link>. Then, authenticate the CLI with your account:
+                If you haven&apos;t already, <Link href="/login" className="text-blue-600 hover:text-blue-800">sign up for a DockAPI account</Link>. Then, authenticate the CLI with your account:
               </p>
 
               <div className="border rounded-md my-4">
@@ -178,7 +176,7 @@ export default function GettingStartedPage() {
 
               <h2 id="configuration">Configuration</h2>
               <p>
-                The `dockapi.yaml` file is the heart of your project configuration. Here's a basic example:
+                The `dockapi.yaml` file is the heart of your project configuration. Here&apos;s a basic example:
               </p>
 
               <div className="border rounded-md my-6">
@@ -193,7 +191,7 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - &quot;8080:8080&quot;
     environment:
       NODE_ENV: production
       PORT: 8080
@@ -251,7 +249,7 @@ services:
 
               <h2 id="next-steps">Next Steps</h2>
               <p>
-                Now that you've deployed your first project, here are some next steps to explore:
+                Now that you&apos;ve deployed your first project, here are some next steps to explore:
               </p>
 
               <ul>
