@@ -117,7 +117,7 @@ export default function FAQPage() {
         <div className="mb-10">
           <h1 className="text-4xl font-bold tracking-tight mb-4">Frequently Asked Questions</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Find answers to common questions about DockAPI's features, pricing, and usage.
+            Find answers to common questions about DockAPI&apos;s features, pricing, and usage.
           </p>
         </div>
 
@@ -161,7 +161,7 @@ export default function FAQPage() {
         <div className="mt-16 bg-slate-50 rounded-xl p-8 text-center">
           <h2 className="text-2xl font-semibold mb-2">Still have questions?</h2>
           <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            If you couldn't find the answer you were looking for, our support team is ready to help.
+            If you couldn&apos;t find the answer you were looking for, our support team is ready to help.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button asChild>
