@@ -191,15 +191,14 @@ services:
   app:
     build: .
     ports:
-      - &quot;8080:8080&quot;
+      - "8080:8080"
     environment:
       NODE_ENV: production
       PORT: 8080
     scale: 1
     health_check:
       path: /health
-      interval: 30s
-`}</code></pre>
+      interval: 30s`}</code></pre>
                 </div>
               </div>
 
