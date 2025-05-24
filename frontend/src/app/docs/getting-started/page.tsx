@@ -191,7 +191,7 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - &quot;8080:8080&quot;
     environment:
       NODE_ENV: production
       PORT: 8080
@@ -228,9 +228,9 @@ services:
 
               <ol>
                 <li>Log in to your <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">DockAPI Dashboard</Link></li>
-                <li>Click on "New Project" or select an existing repository</li>
+                <li>Click on &quot;New Project&quot; or select an existing repository</li>
                 <li>Configure your deployment settings</li>
-                <li>Click "Deploy" to start the deployment process</li>
+                <li>Click &quot;Deploy&quot; to start the deployment process</li>
               </ol>
 
               <div className="bg-slate-50 border rounded-md p-6 my-8">
