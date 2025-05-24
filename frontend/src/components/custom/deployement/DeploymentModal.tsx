@@ -18,7 +18,6 @@ type DeploymentStep = 'config' | 'deploying' | 'complete' | 'error';
 
 export default function DeploymentModal({ repository, onClose }: DeploymentModalProps) {
   const [step, setStep] = useState<DeploymentStep>('config');
-  const [isLoading, setIsLoading] = useState(false);
   const [deploymentUrl, setDeploymentUrl] = useState('');
   const [progress, setProgress] = useState(0);
   
@@ -60,7 +59,6 @@ export default function DeploymentModal({ repository, onClose }: DeploymentModal
 
   const simulateDeployment = () => {
     setStep('deploying');
-    setIsLoading(true);
     setProgress(0);
     
     // Simulate progress updates
@@ -75,7 +73,6 @@ export default function DeploymentModal({ repository, onClose }: DeploymentModal
     setTimeout(() => {
       clearInterval(interval);
       setProgress(100);
-      setIsLoading(false);
       
       // 95% chance of success, 5% chance of error
       if (Math.random() > 0.05) {
